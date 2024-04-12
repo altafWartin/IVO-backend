@@ -333,7 +333,7 @@ exports.getMCQByUsers = async (req, res) => {
   } catch (error) {
     res.status(400).json({ error: "Failed to fetch MCQ session" });
   }
-};
+};   
 
 //Accept friendRequest
 exports.acceptFriendRequest = async (req, res) => {
