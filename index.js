@@ -6,6 +6,10 @@ require("dotenv").config();
 const express = require("express");
 const http = require("http");
 const socketIo = require("socket.io");
+const path = require('path');
+const { createServer } = require('http');
+
+const { getIO, initIO } = require('./socket');
 
 const app = express();
 const server = http.createServer(app);
@@ -21,9 +25,13 @@ const socketIO = require("socket.io");
 const bodyParser = require("body-parser"); // Import body-parser middleware
 
 
+app.use('/', express.static(path.join(__dirname, 'static')));
 
 
 app.use(bodyParser.json());
+
+const httpServer = createServer(app);
+
 
 // for FCM
 process.env.GOOGLE_APPLICATION_CREDENTIALS;
@@ -73,9 +81,9 @@ app.use(cors({
 
 const port =  7000;
 
-server.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
+// server.listen(port, () => {
+//   console.log(`Server is running on port ${port}`);
+// });
 
 
 
@@ -172,3 +180,11 @@ app.post('/verify-otp', (req, res) => {
         res.status(400).send("Invalid OTP. Please try again.");
     }
 });
+
+
+initIO(httpServer);
+
+httpServer.listen(port)
+console.log("Server started on ", port);
+
+getIO();
