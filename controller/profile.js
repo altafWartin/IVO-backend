@@ -1001,10 +1001,6 @@ exports.updateUserFields = async (req, res) => {
       email,
       gender,
       location,
-      job,
-      company,
-      college,
-      about,
     } = req.body;
 
     console.log("Received update user fields request with ID:", _id);
@@ -1018,14 +1014,11 @@ exports.updateUserFields = async (req, res) => {
     // Update fields
     const update = {
       fullName,
+      email,
       dob,
       gender,
-      email,
       location,
-      job,
-      company,
-      college,
-      about,
+    
       // Add any other fields you want to update here
     };
 
@@ -1052,71 +1045,3 @@ exports.updateUserFields = async (req, res) => {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
-
-// exports.updateUserFields = async (req, res) => {
-//   const { _id, fullName, dob, gender, location, job, company, college, about } = req.body;
-
-//   // Access uploaded files
-//   const profilePhotoFile = req.files.profilePhoto[0];
-//   const coverPhotoFile = req.files.coverPhoto[0];
-
-//   // Update fields
-//   const update = {
-//     fullName,
-//     dob,
-//     gender,
-//     location,
-//     job,
-//     company,
-//     college,
-//     about,
-//     // Add any other fields you want to update here
-//   };
-
-//   // Check if profilePhoto and coverPhoto files are uploaded
-//   if (req.files && req.files.profilePhoto && req.files.coverPhoto) {
-//     // Upload profilePhoto to S3 and update the user document
-//     console.log("profilePhoto")
-//     const profilePhotoParams = {
-//       Bucket: process.env.AWS_BUCKET_NAME,
-//       Key: `profileImages/${_id}_${Date.now()}_profilePhoto_${req.files.profilePhoto[0].originalname}`,
-//       Body: req.files.profilePhoto[0].buffer,
-//     };
-
-//     try {
-//       const profilePhotoUploadResult = await s3.upload(profilePhotoParams).promise();
-//       update.profilePhoto = profilePhotoUploadResult.Location;
-//     } catch (profilePhotoUploadError) {
-//       console.error("Error uploading profile photo to AWS S3:", profilePhotoUploadError);
-//       return res.status(500).json({ error: "Error uploading profile photo to AWS S3" });
-//     }
-
-//     // Upload coverPhoto to S3 and update the user document
-//     const coverPhotoParams = {
-//       Bucket: process.env.AWS_BUCKET_NAME,
-//       Key: `profileImages/${_id}_${Date.now()}_coverPhoto_${req.files.coverPhoto[0].originalname}`,
-//       Body: req.files.coverPhoto[0].buffer,
-//     };
-
-//     try {
-//       const coverPhotoUploadResult = await s3.upload(coverPhotoParams).promise();
-//       update.coverPhoto = coverPhotoUploadResult.Location;
-//     } catch (coverPhotoUploadError) {
-//       console.error("Error uploading cover photo to AWS S3:", coverPhotoUploadError);
-//       return res.status(500).json({ error: "Error uploading cover photo to AWS S3" });
-//     }
-//   }
-
-//   const filter = { _id: _id };
-
-//   try {
-//     // Update user in the database
-//     const user = await User.findOneAndUpdate(filter, update, { new: true });
-
-//     return res.json({ user });
-//   } catch (error) {
-//     // Handle error appropriately
-//     console.error(error);
-//     return res.status(500).json({ error: "Internal Server Error" });
-//   }
-// };

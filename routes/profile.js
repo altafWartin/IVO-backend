@@ -43,14 +43,9 @@ router.post("/addQuestions", addQuestions);
 router.post("/addMCQ", addMCQ);
 router.post("/get-mcq", getMCQByUsers);
 router.post("/answerMCQ", answerMCQ);
-router.post("/addComment", AddComment);
-router.post("/getComment", GetComment);
 router.post("/notifications", GetNotifications);
 router.post("/uploadImage", upload.single("photo"), uploadImage);
 router.post("/updateUserFields", updateUserFields);
-// router.post('/update-user', upload.fields([{ name: 'profilePhoto', maxCount: 1 }, { name: 'coverPhoto', maxCount: 1 }]), updateUserFields);
-
-// router.post("/updateUserFields", updateUserFields);
 router.post("/profileUpload", upload.single("photo"), profileUpload);
 router.post("/updateProfilePicture", upload.single("newPhoto"), replaceImage);
 router.post("/uploadCoverPhoto", upload.single("cover"), coverUpload);

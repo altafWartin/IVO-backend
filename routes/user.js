@@ -35,8 +35,6 @@ router.post("/getAllProfiles", getAllUsers, decodeToken, requireSignin);
 router.post("/getAllContacts", getAllContacts, decodeToken, requireSignin);
 router.post("/userExists", userExists);
 router.post("/refreshToken", refreshToken);
-// router.post("/secret", requireSignin, checkError, decodeToken, (req, res)=>{
-//   return res.status(200).send(req.user);
-// });
+
 
 module.exports = router;
