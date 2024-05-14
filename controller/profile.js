@@ -1,7 +1,6 @@
 const User = require("../models/profile/user");
 const Room = require("../models/chat/Room");
-const MCQ = require('../models/profile/MCQ'); // Import the MCQ model
-
+const MCQ = require("../models/profile/MCQ"); // Import the MCQ model
 
 const sendFriendRequest = require("../models/profile/sendFriendRequest");
 // const sendFriendRequest = require("../models/profile/sendFriendRequest");
@@ -114,12 +113,14 @@ exports.sendFriendRequest = async (req, res) => {
     if (senderSent && receiverSent) {
       // Check if there's already a room for these users
       const existingRoom = await Room.findOne({
-        participants: { $all: [senderId, receiverId] }
+        participants: { $all: [senderId, receiverId] },
       });
 
       if (existingRoom) {
         console.log("Room already exists for these users:", existingRoom);
-        return res.status(200).json({ message: "Room already exists", room: existingRoom });
+        return res
+          .status(200)
+          .json({ message: "Room already exists", room: existingRoom });
       }
 
       // Create a room for the participants
@@ -131,7 +132,9 @@ exports.sendFriendRequest = async (req, res) => {
 
       console.log("Room created:", room);
 
-      res.status(200).json({ message: "Friend request sent successfully", room });
+      res
+        .status(200)
+        .json({ message: "Friend request sent successfully", room });
     } else {
       // If not both have sent requests to each other, update friend lists only
       sender.friends.push(receiverId);
@@ -191,7 +194,6 @@ exports.giveThemPush = async (req, res) => {
 
 exports.requestStatus = async (req, res) => {
   const { roomId, status } = req.body;
-
 
   try {
     // Find the room by roomId
@@ -333,7 +335,7 @@ exports.getMCQByUsers = async (req, res) => {
   } catch (error) {
     res.status(400).json({ error: "Failed to fetch MCQ session" });
   }
-};   
+};
 
 //Accept friendRequest
 exports.acceptFriendRequest = async (req, res) => {
@@ -994,14 +996,7 @@ exports.addQuestions = async (req, res) => {
 
 exports.updateUserFields = async (req, res) => {
   try {
-    const {
-      _id,
-      fullName,
-      dob,
-      email,
-      gender,
-      location,
-    } = req.body;
+    const { _id, fullName, dob, bio, email, gender, location } = req.body;
 
     console.log("Received update user fields request with ID:", _id);
 
@@ -1017,8 +1012,9 @@ exports.updateUserFields = async (req, res) => {
       email,
       dob,
       gender,
+      bio,
       location,
-    
+
       // Add any other fields you want to update here
     };
 
