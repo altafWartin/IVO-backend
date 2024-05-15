@@ -691,7 +691,7 @@ exports.replaceImage = async (req, res) => {
 
     const updatedUser = await User.findByIdAndUpdate(
       id,
-      { profilePhoto: uploadResult.Location },
+      { profilePicture: uploadResult.Location },
       { new: true }
     );
 
@@ -703,7 +703,7 @@ exports.replaceImage = async (req, res) => {
     console.log("User profile updated successfully:", updatedUser);
     return res.json({
       message: "Profile image uploaded and user profile updated successfully",
-      profilePhoto: uploadResult.Location,
+      profilePicture: uploadResult.Location,
       profile: updatedUser,
     });
   } catch (error) {
