@@ -141,6 +141,7 @@ exports.verifyOTPLogin = async (req, res) => {
           phoneNumber: phoneNumber,
           fullName: fullName,
           email: email,
+          dob:dob,
           gender: gender,
           location: location,
           profilePicture: "https://love-circle-images.s3.eu-north-1.amazonaws.com/profileImages/660d450273aa0ef2727bf368_1712145810559_Image",
