@@ -21,7 +21,7 @@ function sendOTPviaSMS(phoneNumber, otp) {
     body: `Your OTP for verification is: ${otp}`,
     to: phoneNumber,
     from: "+1 910 557 9362",
-  }); 
+  });
 }
 
 const otps = {};
@@ -141,10 +141,11 @@ exports.verifyOTPLogin = async (req, res) => {
           phoneNumber: phoneNumber,
           fullName: fullName,
           email: email,
-          dob:dob,
+          dob: dob,
           gender: gender,
           location: location,
-          profilePicture: "https://love-circle-images.s3.eu-north-1.amazonaws.com/profileImages/660d450273aa0ef2727bf368_1712145810559_Image",
+          profilePicture:
+            "https://love-circle-images.s3.eu-north-1.amazonaws.com/profileImages/660d450273aa0ef2727bf368_1712145810559_Image",
           // Add other user data fields as needed
         });
 
@@ -305,23 +306,20 @@ exports.getAllUsers = async (req, res) => {
   }
 };
 
-
-
-
 // Function to standardize mobile numbers into the desired format
 function standardizeMobileNumber(number) {
   // Remove all non-digit characters from the number
-  let cleanedNumber = number.replace(/\D/g, '');
+  let cleanedNumber = number.replace(/\D/g, "");
 
   // Check if the number starts with a country code, and extract the relevant parts
-  let countryCode = '';
-  let formattedNumber = '';
+  let countryCode = "";
+  let formattedNumber = "";
 
   if (cleanedNumber.length === 12) {
     countryCode = `+${cleanedNumber.slice(0, 2)}`;
     formattedNumber = `${countryCode}${cleanedNumber.slice(2)}`;
   } else if (cleanedNumber.length === 10) {
-    countryCode = '+91';
+    countryCode = "+91";
     formattedNumber = `${countryCode}${cleanedNumber}`;
   } else {
     formattedNumber = number; // If the number doesn't match expected lengths, keep it as is
@@ -329,7 +327,6 @@ function standardizeMobileNumber(number) {
 
   return formattedNumber;
 }
-
 
 exports.getAllContacts = async (req, res) => {
   const { _id, arrContacts } = req.body;
@@ -339,13 +336,13 @@ exports.getAllContacts = async (req, res) => {
       .status(400)
       .json({ error: "Please provide ID and contacts data." });
   }
-  
+
   try {
     const allUsersExceptSpecified = await User.find({ _id: { $ne: _id } });
 
     // Extract desired fields from each contact and format mobile numbers
     const extractedContacts = arrContacts.map((contact) => {
-      const { givenName, familyName, phoneNumbers,thumbnailPath } = contact;
+      const { givenName, familyName, phoneNumbers, thumbnailPath } = contact;
       const mobileNumber = phoneNumbers.find(
         (number) => number.label === "mobile"
       );
@@ -353,7 +350,7 @@ exports.getAllContacts = async (req, res) => {
       const formattedMobileNumber = mobileNumber
         ? standardizeMobileNumber(mobileNumber.number)
         : null;
-        
+
       return {
         thumbnailPath,
         givenName,
@@ -361,27 +358,33 @@ exports.getAllContacts = async (req, res) => {
         mobileNumber: formattedMobileNumber,
       };
     });
-    console.log(extractedContacts)
+    console.log(extractedContacts);
 
     // Categorize contacts into IVO and non-IVO users
     const ivoUsers = [];
     const nonIvoUsers = [];
 
     extractedContacts.forEach((contact) => {
-      const matchingUser = allUsersExceptSpecified.find((user) =>
-        user.phoneNumber === parseInt(contact.mobileNumber, 10)
+      const matchingUser = allUsersExceptSpecified.find(
+        (user) => user.phoneNumber === parseInt(contact.mobileNumber, 10)
       );
 
       // Check if the mobile numbers match and categorize accordingly
-      if (matchingUser && matchingUser.phoneNumber === parseInt(contact.mobileNumber, 10)) {
-        ivoUsers.push({ ...contact, user: { _id: matchingUser._id, ...matchingUser._doc } });
+      if (
+        matchingUser &&
+        matchingUser.phoneNumber === parseInt(contact.mobileNumber, 10)
+      ) {
+        ivoUsers.push({
+          ...contact,
+          user: { _id: matchingUser._id, ...matchingUser._doc },
+        });
       } else {
         nonIvoUsers.push(contact);
       }
     });
 
-    console.log(ivoUsers.length, nonIvoUsers.length)
-    console.log(ivoUsers)
+    console.log(ivoUsers.length, nonIvoUsers.length);
+    console.log(ivoUsers);
     // Return the categorized users in the response
     return res.json({ ivoUsers, nonIvoUsers });
   } catch (error) {
@@ -390,8 +393,6 @@ exports.getAllContacts = async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 };
-
-
 
 exports.updateUserOnlineStatus = async (req, res, next) => {
   const { userId, isOnline } = req.body;
