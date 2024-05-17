@@ -721,33 +721,54 @@ exports.replaceImage = async (req, res) => {
   }
 };
 
-exports.videoUpload = async (req, res) => {
-  try {
-    const video = req.file;
 
-    if (!video) {
-      return res.status(400).json({ error: 'No video file provided' });
+exports.mediaUpload = async (req, res) => {
+  try {
+    const type = req.body.type; // Assuming type parameter is sent in the request body
+
+    // Check if type is provided
+    if (!type) {
+      return res.status(400).json({ error: 'Type parameter is required' });
+    }
+
+    let file = req.file;
+    let contentType = '';
+
+    // Check type and handle file accordingly
+    if (type === 'video') {
+      if (!file) {
+        return res.status(400).json({ error: 'No video file provided' });
+      }
+      contentType = file.mimetype;
+    } else if (type === 'image') {
+      file = req.file;
+      if (!file) {
+        return res.status(400).json({ error: 'No image file provided' });
+      }
+      contentType = file.mimetype;
+    } else {
+      return res.status(400).json({ error: 'Invalid type parameter. Must be either "video" or "image"' });
     }
 
     const params = {
       Bucket: process.env.AWS_BUCKET_NAME,
-      Key: `videos/${Date.now()}_${video.originalname}`,
-      Body: video.buffer,
-      ContentType: video.mimetype,
+      Key: `${type}s/${Date.now()}_${file.originalname}`,
+      Body: file.buffer,
+      ContentType: contentType,
     };
 
     const uploadResult = await s3.upload(params).promise();
 
     if (!uploadResult || !uploadResult.Location) {
-      return res.status(500).json({ error: 'Error uploading video to AWS S3' });
+      return res.status(500).json({ error: `Error uploading ${type} to AWS S3` });
     }
 
     return res.json({
-      message: 'Video uploaded successfully',
-      videoUrl: uploadResult.Location,
+      message: `${type.charAt(0).toUpperCase() + type.slice(1)} uploaded successfully`,
+      fileUrl: uploadResult.Location,
     });
   } catch (error) {
-    console.error('Error uploading video:', error);
+    console.error('Error uploading file:', error);
     return res.status(500).json({ error: 'Internal Server Error' });
   }
 };

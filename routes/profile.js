@@ -10,7 +10,7 @@ const {
   AddComment,
   GetComment,
   addQuestions,
-  getFilterProfile,videoUpload,
+  getFilterProfile,mediaUpload,
   coverUpload,
   profileUpload,addMCQ,answerMCQ,
   requestStatus,
@@ -53,7 +53,8 @@ router.post("/profileUpload", upload.single("photo"), profileUpload);
 router.post("/updateProfilePicture", upload.single("newPhoto"), replaceImage);
 router.post("/uploadCoverPhoto", upload.single("cover"), coverUpload);
 router.post("/updateCoverPhoto", upload.single("newCover"), replaceCover);
-router.post("/videoUpload", upload.single("video"), videoUpload);
+router.post("/mediaUpload", upload.single("file"), mediaUpload);
+
 router.post("/getSingleProfile", getSingleProfile);
 
 module.exports = router;
