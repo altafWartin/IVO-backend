@@ -16,6 +16,9 @@ const { createServer } = require("http");
 
 const { getIO, initIO } = require("./socket");
 
+// Use CORS middleware
+app.use(cors());
+
 app.use("/", express.static(path.join(__dirname, "static")));
 
 const httpServer = createServer(app);

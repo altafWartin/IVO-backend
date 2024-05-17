@@ -671,9 +671,7 @@ exports.replaceImage = async (req, res) => {
       return res.status(400).json({ error: "Invalid request parameters" });
     }
 
-    console.log(
-      "Uploading new profile image to AWS S3 and updating the server"
-    );
+    console.log("Uploading new profile image to AWS S3 and updating the server");
     const params = {
       Bucket: process.env.AWS_BUCKET_NAME,
       Key: `profileImages/${id}_${Date.now()}_${newPhoto.originalname}`,
@@ -684,20 +682,26 @@ exports.replaceImage = async (req, res) => {
 
     if (!uploadResult || !uploadResult.Location) {
       console.error("Error uploading profile image to AWS S3");
-      return res
-        .status(500)
-        .json({ error: "Error uploading profile image to AWS S3" });
+      return res.status(500).json({ error: "Error uploading profile image to AWS S3" });
     }
 
-    const updatedUser = await User.findByIdAndUpdate(
-      id,
-      { profilePicture: uploadResult.Location },
-      { new: true }
-    );
+    console.log("Upload successful, result:", uploadResult);
+
+    let updatedUser;
+    try {
+      updatedUser = await User.findByIdAndUpdate(
+        id,
+        { profilePicture: uploadResult.Location },
+        { new: true }
+      );
+    } catch (dbError) {
+      console.error("Database error updating user profile:", dbError);
+      return res.status(500).json({ error: "Database error updating user profile" });
+    }
 
     if (!updatedUser) {
-      console.log("Error updating user profile");
-      return res.status(500).json({ error: "Error updating user profile" });
+      console.log("No user found with the provided ID");
+      return res.status(404).json({ error: "No user found with the provided ID" });
     }
 
     console.log("User profile updated successfully:", updatedUser);
@@ -711,6 +715,7 @@ exports.replaceImage = async (req, res) => {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
 
 exports.coverUpload = async (req, res) => {
   try {
