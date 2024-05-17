@@ -666,12 +666,17 @@ exports.replaceImage = async (req, res) => {
     const { id } = req.body;
     const newPhoto = req.file;
 
+    console.log(id,"id")
+    console.log(newPhoto,"newPhoto")
+
     if (!id || !newPhoto) {
       console.log("Invalid request parameters");
       return res.status(400).json({ error: "Invalid request parameters" });
     }
 
+
     console.log("Uploading new profile image to AWS S3 and updating the server");
+
     const params = {
       Bucket: process.env.AWS_BUCKET_NAME,
       Key: `profileImages/${id}_${Date.now()}_${newPhoto.originalname}`,
@@ -713,6 +718,37 @@ exports.replaceImage = async (req, res) => {
   } catch (error) {
     console.error("Error processing profile image replace request:", error);
     return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+exports.videoUpload = async (req, res) => {
+  try {
+    const video = req.file;
+
+    if (!video) {
+      return res.status(400).json({ error: 'No video file provided' });
+    }
+
+    const params = {
+      Bucket: process.env.AWS_BUCKET_NAME,
+      Key: `videos/${Date.now()}_${video.originalname}`,
+      Body: video.buffer,
+      ContentType: video.mimetype,
+    };
+
+    const uploadResult = await s3.upload(params).promise();
+
+    if (!uploadResult || !uploadResult.Location) {
+      return res.status(500).json({ error: 'Error uploading video to AWS S3' });
+    }
+
+    return res.json({
+      message: 'Video uploaded successfully',
+      videoUrl: uploadResult.Location,
+    });
+  } catch (error) {
+    console.error('Error uploading video:', error);
+    return res.status(500).json({ error: 'Internal Server Error' });
   }
 };
 
