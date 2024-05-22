@@ -10,15 +10,20 @@ const {
   AddComment,
   GetComment,
   addQuestions,
-  getFilterProfile,mediaUpload,
+  getFilterProfile,
+  mediaUpload,
   coverUpload,
-  profileUpload,addMCQ,answerMCQ,
+  profileUpload,
+  addMCQ,
+  answerMCQ,
   requestStatus,
   GetNotifications,
-  replaceCover,getMCQByUsers,
+  replaceCover,
+  getMCQByUsers,
   getRooms,
   getFriendRequest,
-  uploadImage,giveThemPush,
+  uploadImage,
+  giveThemPush,
   replaceImage,
   getSingleProfile,
   acceptFriendRequest,
@@ -32,7 +37,7 @@ const AWS = require("aws-sdk");
 const storage = multer.memoryStorage(); // Use memory storage for storing file buffers
 const upload = multer({
   storage: storage,
-  limits: { fileSize: 500 * 1024 * 1024 } // Set the file size limit to 50MB (adjust as needed)
+  limits: { fileSize: 500 * 1024 * 1024 }, // Set the file size limit to 50MB (adjust as needed)
 });
 
 router.post("/getProfile", checkError, getProfile);
@@ -54,7 +59,6 @@ router.post("/updateProfilePicture", upload.single("newPhoto"), replaceImage);
 router.post("/uploadCoverPhoto", upload.single("cover"), coverUpload);
 router.post("/updateCoverPhoto", upload.single("newCover"), replaceCover);
 router.post("/mediaUpload", upload.single("file"), mediaUpload);
-
 router.post("/getSingleProfile", getSingleProfile);
 
 module.exports = router;
