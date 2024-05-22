@@ -37,7 +37,7 @@ const AWS = require("aws-sdk");
 const storage = multer.memoryStorage(); // Use memory storage for storing file buffers
 const upload = multer({
   storage: storage,
-  limits: { fileSize: 500 * 1024 * 1024 }, // Set the file size limit to 50MB (adjust as needed)
+  limits: { fileSize: 200 * 1024 * 1024 } // Set the file size limit to 200MB
 });
 
 router.post("/getProfile", checkError, getProfile);

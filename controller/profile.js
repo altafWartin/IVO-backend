@@ -724,6 +724,8 @@ exports.replaceImage = async (req, res) => {
 
 exports.mediaUpload = async (req, res) => {
   try {
+    console.log(req.body)
+    console.log(req.file)
     const type = req.body.type; // Assuming type parameter is sent in the request body
 
     // Check if type is provided
