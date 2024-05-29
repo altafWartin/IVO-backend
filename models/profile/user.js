@@ -18,8 +18,8 @@ const userSchema = mongoose.Schema(
     coverPhoto: { type: String },
     images: [{ type: String }],
     gender: { type: String },
-    friends: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
- questions: [
+    friends: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+    questions: [
       {
         question: { type: String, required: true },
       },

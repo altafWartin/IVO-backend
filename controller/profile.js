@@ -86,14 +86,16 @@ exports.getFilterProfile = async (req, res) => {
 // // sendFriendRequest route handler
 
 exports.sendFriendRequest = async (req, res) => {
-  const { senderId, receiverId } = req.body;
+  const { senderId, phoneNumber } = req.body;
 
   try {
     console.log("Sender ID:", senderId);
-    console.log("Receiver ID:", receiverId);
-
+    console.log("phoneNumber: " + phoneNumber);
+    const receiver = await User.findOne({ phoneNumber: phoneNumber });
     const sender = await User.findById(senderId);
-    const receiver = await User.findById(receiverId);
+    // const receiver = await User.findById(receiverId);
+
+    const receiverId = receiver._id;
 
     console.log("Sender:", sender);
     console.log("Receiver:", receiver);
@@ -666,16 +668,17 @@ exports.replaceImage = async (req, res) => {
     const { id } = req.body;
     const newPhoto = req.file;
 
-    console.log(id,"id")
-    console.log(newPhoto,"newPhoto")
+    console.log(id, "id");
+    console.log(newPhoto, "newPhoto");
 
     if (!id || !newPhoto) {
       console.log("Invalid request parameters");
       return res.status(400).json({ error: "Invalid request parameters" });
     }
 
-
-    console.log("Uploading new profile image to AWS S3 and updating the server");
+    console.log(
+      "Uploading new profile image to AWS S3 and updating the server"
+    );
 
     const params = {
       Bucket: process.env.AWS_BUCKET_NAME,
@@ -687,7 +690,9 @@ exports.replaceImage = async (req, res) => {
 
     if (!uploadResult || !uploadResult.Location) {
       console.error("Error uploading profile image to AWS S3");
-      return res.status(500).json({ error: "Error uploading profile image to AWS S3" });
+      return res
+        .status(500)
+        .json({ error: "Error uploading profile image to AWS S3" });
     }
 
     console.log("Upload successful, result:", uploadResult);
@@ -701,12 +706,16 @@ exports.replaceImage = async (req, res) => {
       );
     } catch (dbError) {
       console.error("Database error updating user profile:", dbError);
-      return res.status(500).json({ error: "Database error updating user profile" });
+      return res
+        .status(500)
+        .json({ error: "Database error updating user profile" });
     }
 
     if (!updatedUser) {
       console.log("No user found with the provided ID");
-      return res.status(404).json({ error: "No user found with the provided ID" });
+      return res
+        .status(404)
+        .json({ error: "No user found with the provided ID" });
     }
 
     console.log("User profile updated successfully:", updatedUser);
@@ -721,35 +730,36 @@ exports.replaceImage = async (req, res) => {
   }
 };
 
-
 exports.mediaUpload = async (req, res) => {
   try {
-    console.log(req.body)
-    console.log(req.file)
+    console.log(req.body);
+    console.log(req.file);
     const type = req.body.type; // Assuming type parameter is sent in the request body
 
     // Check if type is provided
     if (!type) {
-      return res.status(400).json({ error: 'Type parameter is required' });
+      return res.status(400).json({ error: "Type parameter is required" });
     }
 
     let file = req.file;
-    let contentType = '';
+    let contentType = "";
 
     // Check type and handle file accordingly
-    if (type === 'video') {
+    if (type === "video") {
       if (!file) {
-        return res.status(400).json({ error: 'No video file provided' });
+        return res.status(400).json({ error: "No video file provided" });
       }
       contentType = file.mimetype;
-    } else if (type === 'image') {
+    } else if (type === "image") {
       file = req.file;
       if (!file) {
-        return res.status(400).json({ error: 'No image file provided' });
+        return res.status(400).json({ error: "No image file provided" });
       }
       contentType = file.mimetype;
     } else {
-      return res.status(400).json({ error: 'Invalid type parameter. Must be either "video" or "image"' });
+      return res.status(400).json({
+        error: 'Invalid type parameter. Must be either "video" or "image"',
+      });
     }
 
     const params = {
@@ -762,19 +772,22 @@ exports.mediaUpload = async (req, res) => {
     const uploadResult = await s3.upload(params).promise();
 
     if (!uploadResult || !uploadResult.Location) {
-      return res.status(500).json({ error: `Error uploading ${type} to AWS S3` });
+      return res
+        .status(500)
+        .json({ error: `Error uploading ${type} to AWS S3` });
     }
 
     return res.json({
-      message: `${type.charAt(0).toUpperCase() + type.slice(1)} uploaded successfully`,
+      message: `${
+        type.charAt(0).toUpperCase() + type.slice(1)
+      } uploaded successfully`,
       fileUrl: uploadResult.Location,
     });
   } catch (error) {
-    console.error('Error uploading file:', error);
-    return res.status(500).json({ error: 'Internal Server Error' });
+    console.error("Error uploading file:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 };
-
 
 exports.coverUpload = async (req, res) => {
   try {
