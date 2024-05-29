@@ -14,21 +14,12 @@ const userSchema = mongoose.Schema(
     dob: { type: Date },
     profilePicture: { type: String },
     otp: { type: String },
-    device_tokens: { type: String },
+    device_token: { type: String },
     coverPhoto: { type: String },
     images: [{ type: String }],
     gender: { type: String },
     friends: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
-
-    // friends: [
-    //   {
-    //     friendId: { type: String, required: true },
-    //     name: { type: String, default: "" },
-    //     profilePicture: { type: String, default: "" },
-    //   },
-    // ],
-    // questions: [{ type: String }], // Array field to store questions
-    questions: [
+ questions: [
       {
         question: { type: String, required: true },
       },

@@ -84,10 +84,27 @@ exports.sendOTP = async (req, res) => {
 
 exports.verifyOTPLogin = async (req, res) => {
   try {
-    const { phoneNumber, fullName, email, dob, gender, location, otp } =
-      req.body;
+    const {
+      phoneNumber,
+      fullName,
+      email,
+      dob,
+      gender,
+      location,
+      device_token,
+      otp,
+    } = req.body;
 
-    console.log(phoneNumber, fullName, email, dob, gender, location, otp); // Logging received data for debugging
+    console.log(
+      phoneNumber,
+      fullName,
+      email,
+      dob,
+      gender,
+      device_token,
+      location,
+      otp
+    ); // Logging received data for debugging
 
     if (!otp && !phoneNumber) {
       return res.json({
@@ -128,6 +145,7 @@ exports.verifyOTPLogin = async (req, res) => {
           !phoneNumber ||
           !fullName ||
           !email ||
+          !device_token ||
           !dob ||
           !gender ||
           !location
@@ -142,6 +160,7 @@ exports.verifyOTPLogin = async (req, res) => {
           fullName: fullName,
           email: email,
           dob: dob,
+          device_token: device_token,
           gender: gender,
           location: location,
           profilePicture:
